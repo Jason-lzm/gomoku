@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.lzm.gomoku.common.Constants;
 import com.lzm.gomoku.R;
+import com.lzm.gomoku.model.ChessPoint;
 import com.lzm.gomoku.utils.GameJudger;
 
 /**
@@ -32,6 +33,8 @@ public class ChessBoardView extends View {
     private float ratioPieceOfLineHeight = 0.9f;
     private int mPieceWidth;
 
+    private PutChessListener mPutChessListener;
+
     // 判断当前落下的棋子是否是白色的
     private boolean mIsCurrentWhite = true;
     // 记录黑白棋子位置的列表
@@ -39,6 +42,8 @@ public class ChessBoardView extends View {
 
     // 游戏是否结束
     private boolean mIsGameOver;
+
+    private boolean mPlayerRound = true;
 
     public ChessBoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -54,6 +59,10 @@ public class ChessBoardView extends View {
 
         mWhiteChessBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.white_piece);
         mBlackChessBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.black_piece);
+    }
+
+    public void setPutChessListener(PutChessListener listener) {
+        mPutChessListener = listener;
     }
 
     @Override
@@ -95,6 +104,7 @@ public class ChessBoardView extends View {
                     reStart();
                 }
             }).setNegativeButton("取消", null).show();
+            mPutChessListener.onGameOver();
         }
     }
 
@@ -151,15 +161,7 @@ public class ChessBoardView extends View {
             int x = (int)(event.getX()/ mGridWidth);
             int y = (int)(event.getY()/ mGridWidth);
 
-            if(mIsCurrentWhite) {
-                putChess(Constants.CHESS_WHITE, x, y);
-            } else {
-                putChess(Constants.CHESS_BLACK, x, y);
-            }
-            // 检查游戏是否结束
-            checkGameOver(mBoard, x, y);
-            invalidate();
-            mIsCurrentWhite = !mIsCurrentWhite;
+            putChess(x, y);
         }
         return true;
     }
@@ -171,11 +173,29 @@ public class ChessBoardView extends View {
         invalidate();
     }
 
-    private boolean putChess(int role, int x, int y){
+    public boolean putChess(int x, int y){
         if(mBoard[x][y] == Constants.CHESS_NONE){
-            mBoard[x][y] = role;
+            if(mIsCurrentWhite) {
+                mBoard[x][y] = Constants.CHESS_WHITE;
+            } else {
+                mBoard[x][y] = Constants.CHESS_BLACK;
+            }
+            // 检查游戏是否结束
+            checkGameOver(mBoard, x, y);
+            if(mPlayerRound){
+                ChessPoint currentPoint = new ChessPoint(x, y, mBoard[x][y], 0);
+                mPutChessListener.onPutChess(currentPoint);
+            }
+            mIsCurrentWhite = !mIsCurrentWhite;
+            mPlayerRound = !mPlayerRound;
+            invalidate();
             return true;
         }
         return false;
+    }
+
+    public interface PutChessListener {
+        void onPutChess(ChessPoint currentPoint);
+        void onGameOver();
     }
 }

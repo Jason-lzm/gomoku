@@ -6,10 +6,21 @@
     android:background="@mipmap/background"
     tools:context=".ui.activity.MainActivity">
 
-    <com.lzm.gomoku.ui.view.ChessBoardView
-        android:id="@+id/boardView"
-        android:layout_centerInParent="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+        <Button
+            android:id="@+id/singlePlayer"
+            android:text="@string/singlePlayer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
+        <Button
+            android:id="@+id/multiPlayer"
+            android:text="@string/multiPlayer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </RelativeLayout>

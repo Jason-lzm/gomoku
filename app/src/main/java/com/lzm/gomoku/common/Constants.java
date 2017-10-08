@@ -8,6 +8,16 @@ public class Constants {
     public static int CHESS_WHITE = 1;
     public static int CHESS_BLACK = 2;
 
+    public enum MODEL {
+        SINGLE,
+        MULTI
+    }
+
+    public enum LEVEL {
+        NORMAL,
+        HARD
+    }
+
     // 五子连珠
     public final static int MAX_COUNT_IN_LINE = 5;
     // 棋盘的行数
